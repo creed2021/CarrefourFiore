@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Thu Nov 06 2025 13:59:46 GMT+0000 (Coordinated Universal Time)",
+    "generatorPlatform": "SAP Business Application Studio",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "https://carrefour-arg-process-automation-95oeuot4-sp-dev-asient5a21c038.cfapps.us30.hana.ondemand.com/odata/v4/gestiona-asientos",
+    "appName": "solicitud-asientos-ajuste",
+    "appTitle": "Solicitud de asientos",
+    "appDescription": "Solicitud de asientos",
+    "appNamespace": "com.carrefour",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.142.0",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.19.3",
+    "template": "Basic V4",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

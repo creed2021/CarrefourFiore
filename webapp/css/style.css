@@ -1,0 +1,67 @@
+/* Enter your custom styles here */
+/* Enter your custom styles here */
+.myFormBackground {
+  background-color: #f0f0f0;  /* gris claro */
+  padding: 1rem;             /* opcional: margen interno */
+  border-radius: 8px;         /* opcional: esquinas redondeadas */
+}
+
+/* Fondo de cada contenedor dentro del form */
+.myFormBackground .sapUiFormContainer {
+  background-color: #f0f0f0 !important; /* igual que el form */
+}
+
+/* Fondo de cada elemento */
+.myFormBackground .sapUiFormElement {
+  background-color: #f0f0f0 !important;
+}
+
+/* Bordes rojos para inputs con error */
+input.sapMInputBaseInner.myError,
+.sapMInputBase.myError .sapMInputBaseInner {
+  border: 2px solid red !important;
+}
+
+.inputError {
+  border: 2px solid red !important; 
+  /* opcional */
+  background-color: #fff5f5;  /* fondo rojizo suave */
+}
+
+.myFormBox {
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: .5rem;
+  height: 25rem;
+  padding: 1rem;
+}
+
+.tightLabel {
+  margin-bottom: 0.1rem !important;
+}
+
+.lVerticalLayoutClass .sapMLabel,
+.lVerticalLayoutClass .sapMInput {
+  margin: 3 !important;
+  padding: 3 !important;
+}
+
+.miInputChico .sapMInputBaseInner {
+  font-size: 0.70rem; /* texto más chico */
+  text-align: center;
+}
+
+.miInputGrande .sapMInputBaseInner {
+  font-size: 1.2rem; /* texto más grande */
+}
+
+.miSeparador {
+  border-top: 1px solid #d9d9d9; /* gris clarito */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sapMListTblHeaderCell .miHeaderColumna {
+  color: #1d1bb2d4 !important;
+  font-weight: bold !important;
+}

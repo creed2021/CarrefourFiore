@@ -1,0 +1,153 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "com.carrefour.solicitudasientosajuste",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.19.3",
+      "toolsId": "486936d6-6c83-40a2-bd9c-6118738e47a6"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/gestiona-asientos/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      },
+      "catalogService": {
+        "uri": "/odata/v4/catalog/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "solasientosajuste-display": {
+          "semanticObject": "solasientosajuste",
+          "action": "display",
+          "title": "{{solasientosajuste-display.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.142.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "com.carrefour.solicitudasientosajuste.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+            "operationMode" : "Server",
+            "synchronizationMode" : "None",
+            "updateGroupId" : "myAppUpdateGroup",
+            "autoExpandSelect" : true
+        }
+      },
+      "catalog": {
+        "dataSource": "catalogService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "operationMode": "Server",
+          "groupId": "$direct",
+          "updateGroupId":"$direct",
+          "autoExpandSelect": true,
+          "earlyRequests": true,
+          "synchronizationMode": "None"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "com.carrefour.solicitudasientosajuste.view",
+        "async": true,
+        "viewPath": "com.carrefour.solicitudasientosajuste.view"
+      },
+      "routes": [
+        {
+          "name": "RouteSolAsientosAjuste",
+          "pattern": ":?query:",
+          "target": [
+            "TargetSolAsientosAjuste"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetSolAsientosAjuste": {
+          "id": "SolAsientosAjuste",
+          "name": "SolAsientosAjuste"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "com.carrefour.solicitudasientosajuste.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "comcarrefoursolicitudasientosajuste"
+  }
+}
