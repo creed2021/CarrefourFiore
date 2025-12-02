@@ -127,6 +127,12 @@ sap.ui.define([
             const oModel = this.getView().getModel();
 
             try {
+                // Setear propiedades en el modelo antes de guardar
+                const oContext = this.getView().getBindingContext();
+                oContext.setProperty("periodoMes", periodoMes);
+                oContext.setProperty("periodoAnio", periodoAnio);
+
+
                 await oModel.submitBatch("myAppUpdateGroup");
                 const aMessages = oMsgManager.getMessageModel().getData();
                 const aErrores = aMessages.filter(m => m.type === sap.ui.core.MessageType.Error);
@@ -408,12 +414,14 @@ sap.ui.define([
             // Lista de campos requeridos según tu formulario
             const aCampos = [
                 { id: "txtsolicitante", label: "Solicitante" },
+                { id: "cbSector", label: "Sector"},
                 { id: "txtsociedad", label: "Sociedad" },
                 { id: "txtMoneda", label: "Moneda" },          // ComboBox
                 { id: "txtClaseDocumento", label: "Clase Documento" },
                 { id: "dpFechaConta", label: "Fecha Contabilización" }, // DatePicker
                 { id: "dpFechaDoc", label: "Fecha Documento" },          // DatePicker
                 { id: "txtPeriodo", label: "Período/Año" },              // MaskInput
+                { id: "cbTipoAsiento", label: "Tipo de Asiento"},
                 { id: "txttextocabecera", label: "Texto Cabecera" }
             ];
 
