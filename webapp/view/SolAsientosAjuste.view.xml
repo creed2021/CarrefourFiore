@@ -214,6 +214,35 @@
         </items>
     </Table>
     </ScrollContainer>
+
+            <ScrollContainer id="scadjuntosSolicitud" height="12rem" vertical="true" horizontal="false">
+            <Table id="tbladjuntosSolicitud" inset="false" items="{
+                                parameters : {
+                                    $count : true,
+                                    $$ownRequest : true
+                                },
+                                path : 'adjuntosSolicitud'
+                            }"
+            growing="true" growingScrollToLoad="true">
+                <columns>
+                    <Column id="cidentificadorAdjunto" width="4rem">
+                        <Text id="txtidentificadorAdjunto" text="Identificador" class="miHeaderColumna"/>
+                    </Column>
+                    <Column id="cnombreAdjunto" width="7rem">
+                        <Text id="txtnombreAdjuntoe" text="Nombre" class="miHeaderColumna"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem id="ciidentificadorAdjunto">
+                        <cells>
+                            <Input id="itidentificadorAdjunto" value="{identificadorAdjunto}" width="100%" class="miInputChico" required="true" editable="false"/>
+                            <Input id="itnombreAdjunto" value="{nombreAdjunto}" width="100%" class="miInputChico" required="true" editable="false"/>
+                        </cells>
+                    </ColumnListItem>
+                    <!-- puedes agregar más filas desde el controller -->
+                </items>
+            </Table>
+        </ScrollContainer>
     </Panel>
     <!-- Botón Confirmar alineado a la derecha -->
     <HBox id="hb1" justifyContent="End" class="sapUiSmallMarginTop">

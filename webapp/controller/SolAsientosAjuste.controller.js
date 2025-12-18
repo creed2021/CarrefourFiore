@@ -27,6 +27,9 @@ sap.ui.define([
         onAfterRendering: function(){
             var oAsientoBinding = this.getView().getModel().bindList("/CabeceraAsiento");
 
+            this._uploadSessionId = crypto.randomUUID();
+            this._adjuntosPreparados = false;
+
             this.oNewAsientoContext = oAsientoBinding.create({
                     correo_solicitante: this.completaUsuario (),
                     periodoAnio: new Date().getFullYear(),
@@ -34,7 +37,8 @@ sap.ui.define([
                     moneda: "ARS",
                     claseDocumento: "SA",
                     sociedad: "INCS",
-                    items: []
+                    items: [],
+                    adjuntosSolicitud: []
             });
 
             this.oNewAsientoContext.created().catch(err => MessageBox.error(err.message));
@@ -175,13 +179,79 @@ sap.ui.define([
             }
         },
 
+            agregaAdjunto: function (identificadorAdjuntoParam, nombreAdjuntoParam){
+
+                // Obtener el binding REAL de adjuntos creado por la tabla oculta
+                this.byId("tbladjuntosSolicitud").getBinding("items").create({
+                    nombreAdjunto: nombreAdjuntoParam,
+                    identificadorAdjunto: identificadorAdjuntoParam
+                });
+
+                console.log("Adjunto agregado a OData:", nombreAdjuntoParam);
+            },
+        onFileChangeAdjunto: async function (oEvent) {
+            const oFile = oEvent.getParameter("files")?.[0];
+            if (!oFile) {
+                MessageBox.error("No se seleccionó ningún archivo.");
+                return;
+            }
+
+            const sUrlBackend =
+                this._getAppModulePath() + "/odata/v4/gestiona-asientos/prepareAdjuntos";
+
+            // 1️⃣ Preparar carpeta temporal (una sola vez)
+            if (!this._adjuntosPreparados) {
+                await fetch(sUrlBackend , {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        sessionId: this._uploadSessionId
+                    })
+                });
+                this._adjuntosPreparados = true;
+            }
+
+            // 2️⃣ Subir archivo a carpeta temporal
+            const nombreFinal = this.formatoNombreArchivo(oFile.name);
+            const formData = new FormData();
+
+            formData.append("cmisaction", "createDocument");
+            formData.append("propertyId[0]", "cmis:name");
+            formData.append("propertyValue[0]", nombreFinal);
+            formData.append("propertyId[1]", "cmis:objectTypeId");
+            formData.append("propertyValue[1]", "cmis:document");
+            formData.append("media", oFile, nombreFinal);
+
+            const sUrl =
+                this._getAppModulePath() +
+                "/apidms/browser/59ec1b8c-cf7c-465c-bd5b-460bcb6ca9a4/root/solicitud-asientos-adjuntos/temp/" +
+                this._uploadSessionId;
+
+            const response = await fetch(sUrl, {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("Error subiendo archivo a DMS");
+            }
+
+            const data = await response.json();
+            const objectId = data?.succinctProperties?.["cmis:objectId"];
+            const fileName = data?.succinctProperties?.["cmis:contentStreamFileName"];
+
+            // 3️⃣ Crear registro OData (AdjuntoSolicitud)
+            this.byId("tbladjuntosSolicitud").getBinding("items").create({
+                identificadorAdjunto: objectId,
+                nombreAdjunto: fileName,
+                sessionId: this._uploadSessionId
+            });
+
+            MessageToast.show("Adjunto cargado correctamente");
+        },
 
 
-
-
-
-
-        onFileChangeAdjunto: function (oEvent) {
+        onFileChangeAdjuntoOLD: function (oEvent) {
             let that = this;
             let rutaInicial = "/apidms/browser/"; //despliegue
             const oFile = oEvent.getParameter("files")?.[0];
@@ -243,11 +313,17 @@ sap.ui.define([
                         console.log("ID del documento subido:", objectId);
 
                         // Guardar en un modelo JSON para reutilizar en la vista
-                        const oModel = new sap.ui.model.json.JSONModel({
-                            objectId: objectId,
-                            fileName: fileName
-                        });
-                        that.getView().setModel(oModel, "DMSFile");
+                        // const oModel = new sap.ui.model.json.JSONModel({
+                        //     objectId: objectId,
+                        //     fileName: fileName
+                        // });
+                        // that.getView().setModel(oModel, "DMSFile");
+
+                        // that.byId("tbladjuntosSolicitud").getBinding("adjuntosSolicitud").create({
+                        //     identificadorAdjunto: objectId,
+                        //     nombreAdjunto: fileName
+                        // });
+                        this.agregaAdjunto(objectId, fileName);
 
                         // Mostrar al usuario
                         MessageBox.show(`Archivo "${fileName}" subido con éxito. ID: ${objectId}`);
@@ -287,7 +363,7 @@ sap.ui.define([
                 var excelRows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
 
                 // modelo de la tabla
-                var oTable = this.byId("tblItems");
+                //var oTable = this.byId("tblItems");
                 //DJ var oModel = oTable.getModel("Asientos");
 
                 // vaciar antes de cargar nuevo Excel
