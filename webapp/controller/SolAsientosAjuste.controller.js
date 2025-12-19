@@ -324,7 +324,7 @@ sap.ui.define([
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Archivo subido:", data);
+                    //console.log("Archivo subido:", data);
                     MessageToast.show("Archivo subido correctamente.");
                     //Obtener Archivo Subido el ID
                     // ✅ Obtener el ID del documento subido
@@ -478,7 +478,7 @@ sap.ui.define([
         _getAppModulePath: function () {
             const appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
             const appPath = appId.replaceAll(".", "/");
-            MessageBox.show(appPath);
+            //MessageBox.show(appPath);
             return jQuery.sap.getModulePath(appPath);
         },
         //Eliminacion y formato de caracteres raros en el nombre del archivo
