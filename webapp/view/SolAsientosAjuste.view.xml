@@ -215,7 +215,7 @@
     </Table>
     </ScrollContainer>
 
-            <ScrollContainer id="scadjuntosSolicitud" height="12rem" vertical="true" horizontal="false">
+            <ScrollContainer visible="false" id="scadjuntosSolicitud" height="12rem" vertical="true" horizontal="false">
             <Table id="tbladjuntosSolicitud" inset="false" items="{
                                 parameters : {
                                     $count : true,

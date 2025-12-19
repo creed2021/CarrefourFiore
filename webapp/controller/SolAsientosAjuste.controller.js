@@ -1,10 +1,10 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller",
-	"sap/ui/core/Messaging",
-  "sap/m/MessageToast",
-  "sap/m/MessageBox",
-  "sap/ui/model/odata/v4/ODataModel",
-  "sap/ui/model/json/JSONModel"
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/core/Messaging",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox",
+    "sap/ui/model/odata/v4/ODataModel",
+    "sap/ui/model/json/JSONModel"
 ], (Controller, Messaging, MessageToast, MessageBox, ODataModel, JSONModel, xlsx) => {
     "use strict";
 
@@ -12,7 +12,7 @@ sap.ui.define([
     const XLSX = window.XLSX;
 
     return Controller.extend("com.carrefour.solicitudasientosajuste.controller.SolAsientosAjuste", {
-        onInit: function() {
+        onInit: function () {
             this.completaUsuario();
 
             sap.ui.getCore().attachValidationError(oEvent => {
@@ -24,21 +24,21 @@ sap.ui.define([
         },
 
 
-        onAfterRendering: function(){
+        onAfterRendering: function () {
             var oAsientoBinding = this.getView().getModel().bindList("/CabeceraAsiento");
 
             this._uploadSessionId = crypto.randomUUID();
             this._adjuntosPreparados = false;
 
             this.oNewAsientoContext = oAsientoBinding.create({
-                    correo_solicitante: this.completaUsuario (),
-                    periodoAnio: new Date().getFullYear(),
-                    periodoMes: new Date().getMonth() + 1,
-                    moneda: "ARS",
-                    claseDocumento: "SA",
-                    sociedad: "INCS",
-                    items: [],
-                    adjuntosSolicitud: []
+                correo_solicitante: this.completaUsuario(),
+                periodoAnio: new Date().getFullYear(),
+                periodoMes: new Date().getMonth() + 1,
+                moneda: "ARS",
+                claseDocumento: "SA",
+                sociedad: "INCS",
+                items: [],
+                adjuntosSolicitud: []
             });
 
             this.oNewAsientoContext.created().catch(err => MessageBox.error(err.message));
@@ -46,7 +46,7 @@ sap.ui.define([
 
         },
 
-        completaUsuario () {
+        completaUsuario() {
             //Si está corriendo en Launchpad (FLP)
             if (sap.ushell && sap.ushell.Container) {
                 const oUserInfo = sap.ushell.Container.getService("UserInfo");
@@ -179,16 +179,16 @@ sap.ui.define([
             }
         },
 
-            agregaAdjunto: function (identificadorAdjuntoParam, nombreAdjuntoParam){
+        agregaAdjunto: function (identificadorAdjuntoParam, nombreAdjuntoParam) {
 
-                // Obtener el binding REAL de adjuntos creado por la tabla oculta
-                this.byId("tbladjuntosSolicitud").getBinding("items").create({
-                    nombreAdjunto: nombreAdjuntoParam,
-                    identificadorAdjunto: identificadorAdjuntoParam
-                });
+            // Obtener el binding REAL de adjuntos creado por la tabla oculta
+            this.byId("tbladjuntosSolicitud").getBinding("items").create({
+                nombreAdjunto: nombreAdjuntoParam,
+                identificadorAdjunto: identificadorAdjuntoParam
+            });
 
-                console.log("Adjunto agregado a OData:", nombreAdjuntoParam);
-            },
+            console.log("Adjunto agregado a OData:", nombreAdjuntoParam);
+        },
         onFileChangeAdjunto: async function (oEvent) {
             const oFile = oEvent.getParameter("files")?.[0];
             if (!oFile) {
@@ -201,7 +201,7 @@ sap.ui.define([
 
             // 1️⃣ Preparar carpeta temporal (una sola vez)
             if (!this._adjuntosPreparados) {
-                await fetch(sUrlBackend , {
+                await fetch(sUrlBackend, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -220,6 +220,8 @@ sap.ui.define([
             formData.append("propertyValue[0]", nombreFinal);
             formData.append("propertyId[1]", "cmis:objectTypeId");
             formData.append("propertyValue[1]", "cmis:document");
+            formData.append("succinct", "true");
+            formData.append("includeAllowableActions", "true");
             formData.append("media", oFile, nombreFinal);
 
             const sUrl =
@@ -240,10 +242,30 @@ sap.ui.define([
             const objectId = data?.succinctProperties?.["cmis:objectId"];
             const fileName = data?.succinctProperties?.["cmis:contentStreamFileName"];
 
+            const REPO_ID_DEV = "59ec1b8c-cf7c-465c-bd5b-460bcb6ca9a4";
+            //const REPO_ID_PRD = "f2fdf3d8-7692-4816-ba33-563a9390dae1";
+
+            //const BASE_URL_PRD = "";
+            const BASE_URL_DEV = "https://process-automation-95oeuot4.us30.sdm.cloud.sap" +
+                "/comsapecmreuse.comsapecmreusedocumentTable/api/browser/";
+
+            const objectIdEncoded = encodeURIComponent(objectId);
+            const fileNameEncoded = encodeURIComponent(fileName);
+
+            const urlAdjunto =
+                BASE_URL_DEV +
+                REPO_ID_DEV +
+                "/root" +
+                "?objectId=" + objectIdEncoded +
+                "&cmisSelector=content" +
+                "&download=attachment" +
+                "&filename=" + fileNameEncoded;
+
             // 3️⃣ Crear registro OData (AdjuntoSolicitud)
             this.byId("tbladjuntosSolicitud").getBinding("items").create({
                 identificadorAdjunto: objectId,
                 nombreAdjunto: fileName,
+                urlAdjunto: urlAdjunto,
                 sessionId: this._uploadSessionId
             });
 
@@ -337,8 +359,8 @@ sap.ui.define([
                 });
         },
 
-       onFileChange: async function (oEvent) {
-                // esperar a que XLSX esté disponible
+        onFileChange: async function (oEvent) {
+            // esperar a que XLSX esté disponible
             if (!window.XLSX) {
                 sap.m.MessageBox.warning("La librería Excel todavía se está cargando. Espere un momento y vuelva a intentar.");
                 return;
@@ -490,14 +512,14 @@ sap.ui.define([
             // Lista de campos requeridos según tu formulario
             const aCampos = [
                 { id: "txtsolicitante", label: "Solicitante" },
-                { id: "cbSector", label: "Sector"},
+                { id: "cbSector", label: "Sector" },
                 { id: "txtsociedad", label: "Sociedad" },
                 { id: "txtMoneda", label: "Moneda" },          // ComboBox
                 { id: "txtClaseDocumento", label: "Clase Documento" },
                 { id: "dpFechaConta", label: "Fecha Contabilización" }, // DatePicker
                 { id: "dpFechaDoc", label: "Fecha Documento" },          // DatePicker
                 { id: "txtPeriodo", label: "Período/Año" },              // MaskInput
-                { id: "cbTipoAsiento", label: "Tipo de Asiento"},
+                { id: "cbTipoAsiento", label: "Tipo de Asiento" },
                 { id: "txttextocabecera", label: "Texto Cabecera" }
             ];
 
