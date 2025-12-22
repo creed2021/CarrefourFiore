@@ -162,7 +162,7 @@
                           name="adjuntoUploader"
                           buttonOnly="true"
                           uploadOnChange="false"
-                          fileType="pdf,jpg,jpeg,png"
+                          fileType="xls,xlsx,pdf,jpg,jpeg,png"
                           change="onFileChangeAdjunto"
                           xmlns:unified="sap.ui.unified"
                           icon="sap-icon://attachment"

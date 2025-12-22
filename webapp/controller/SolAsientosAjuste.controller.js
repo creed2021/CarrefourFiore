@@ -224,10 +224,22 @@ sap.ui.define([
             formData.append("includeAllowableActions", "true");
             formData.append("media", oFile, nombreFinal);
 
+            const REPO_ID_DEV = "59ec1b8c-cf7c-465c-bd5b-460bcb6ca9a4";
+            const REPO_ID_PRD = "f2fdf3d8-7692-4816-ba33-563a9390dae1";
+
+            const BASE_URL_PRD = "";
+            const BASE_URL_DEV = "https://process-automation-95oeuot4.us30.sdm.cloud.sap" +
+                "/comsapecmreuse.comsapecmreusedocumentTable/api/browser/";
+
+
+            console.log("this._getAppModulePath()*******", this._getAppModulePath());
+
             const sUrl =
                 this._getAppModulePath() +
-                "/apidms/browser/59ec1b8c-cf7c-465c-bd5b-460bcb6ca9a4/root/solicitud-asientos-adjuntos/temp/" +
+                "/apidms/browser/"+REPO_ID_PRD+"/root/solicitud-asientos-adjuntos/temp/" +
                 this._uploadSessionId;
+
+            console.log("***********sUrl*********", sUrl);
 
             const response = await fetch(sUrl, {
                 method: "POST",
@@ -242,19 +254,12 @@ sap.ui.define([
             const objectId = data?.succinctProperties?.["cmis:objectId"];
             const fileName = data?.succinctProperties?.["cmis:contentStreamFileName"];
 
-            const REPO_ID_DEV = "59ec1b8c-cf7c-465c-bd5b-460bcb6ca9a4";
-            //const REPO_ID_PRD = "f2fdf3d8-7692-4816-ba33-563a9390dae1";
-
-            //const BASE_URL_PRD = "";
-            const BASE_URL_DEV = "https://process-automation-95oeuot4.us30.sdm.cloud.sap" +
-                "/comsapecmreuse.comsapecmreusedocumentTable/api/browser/";
-
             const objectIdEncoded = encodeURIComponent(objectId);
             const fileNameEncoded = encodeURIComponent(fileName);
 
             const urlAdjunto =
                 BASE_URL_DEV +
-                REPO_ID_DEV +
+                REPO_ID_PRD +
                 "/root" +
                 "?objectId=" + objectIdEncoded +
                 "&cmisSelector=content" +

@@ -5,7 +5,7 @@
     {
       "source": "^/odata/(.*)$",
       "target": "/odata/$1",
-      "destination": "dest_backend_asientos_SP_DEV",
+      "destination": "dest_backend_asientos_SP_PRD",
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
