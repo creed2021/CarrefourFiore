@@ -50,7 +50,8 @@
                                                 selectedKey="{sectorSolicitante_ID}"
                                                 items="{
                                                     path: 'catalog>/Sectores',
-                                                    parameters: { $select: 'ID,nombre' }
+                                                    parameters: { $select: 'ID,nombre' },
+                                                     sorter: {path: 'nombre',descending: false}
                                                 }">
                                                 <core:Item key="{catalog>ID}" text="{catalog>nombre}" />
                                             </ComboBox>
