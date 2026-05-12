@@ -236,7 +236,7 @@ sap.ui.define([
 
             const sUrl =
                 this._getAppModulePath() +
-                "/apidms/browser/"+REPO_ID_DEV+"/root/solicitud-asientos-adjuntos/temp/" +
+                "/apidms/browser/"+REPO_ID_PRD+"/root/solicitud-asientos-adjuntos/temp/" +
                 this._uploadSessionId;
 
             console.log("***********sUrl*********", sUrl);
@@ -259,7 +259,7 @@ sap.ui.define([
 
             const urlAdjunto =
                 BASE_URL_DEV +
-                REPO_ID_DEV +
+                REPO_ID_PRD +
                 "/root" +
                 "?objectId=" + objectIdEncoded +
                 "&cmisSelector=content" +
