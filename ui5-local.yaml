@@ -31,8 +31,8 @@ server:
         ignoreCertErrors: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
         backend:
           - path: /odata
-            url: https://carrefour-arg-process-automation-95oeuot4-sp-dev-asient5a21c038.cfapps.us30.hana.ondemand.com
-            destination: dest_backend_asientos_SP_DEV
+            url: https://carrefour-arg-carrefour-asientos-manuales-6nw9u6rt-sp-p59abd6f6.cfapps.us30.hana.ondemand.com
+            destination: dest_backend_asientos_SP_PRD
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
