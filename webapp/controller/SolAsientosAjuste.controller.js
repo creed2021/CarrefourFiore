@@ -503,7 +503,7 @@ sap.ui.define([
 
             if (iAdjuntos === 0) {
                 MessageBox.error(
-                    "Para el tipo de asiento seleccionado es obligatorio adjuntar al menos un archivo."
+                    "para el tipo de asiento ingresado debe adjuntar documentación de respaldo"
                 );
                 return false;
             }
