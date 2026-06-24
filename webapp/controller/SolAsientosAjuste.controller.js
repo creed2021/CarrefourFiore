@@ -127,6 +127,13 @@ sap.ui.define([
                 return;
             }
 
+            //validacion Adjuntos segun entidad nueva
+            const bAdjuntoOK = await this._validarAdjuntoObligatorio();
+
+            if (!bAdjuntoOK) {
+                return;
+            }
+
             sap.ui.core.BusyIndicator.show(0);
             const oModel = this.getView().getModel();
 
@@ -236,7 +243,7 @@ sap.ui.define([
 
             const sUrl =
                 this._getAppModulePath() +
-                "/apidms/browser/"+REPO_ID_DEV+"/root/solicitud-asientos-adjuntos/temp/" +
+                "/apidms/browser/" + REPO_ID_DEV + "/root/solicitud-asientos-adjuntos/temp/" +
                 this._uploadSessionId;
 
             console.log("***********sUrl*********", sUrl);
@@ -451,6 +458,57 @@ sap.ui.define([
                 this._validarTotales(aData);
             };
             reader.readAsArrayBuffer(oFile);
+        },
+
+        _validarAdjuntoObligatorio: async function () {
+
+            const sTipoAsientoId = this.byId("cbTipoAsiento").getSelectedKey();
+
+            if (!sTipoAsientoId) {
+                return true;
+            }
+
+            const oCatalogModel = this.getView().getModel("catalog");
+
+            const oBinding = oCatalogModel.bindList(
+                "/ConfigAdjuntosObligatorios",
+                null,
+                null,
+                [
+                    new sap.ui.model.Filter(
+                        "tipoAsiento_ID",
+                        sap.ui.model.FilterOperator.EQ,
+                        sTipoAsientoId
+                    )
+                ]
+            );
+
+            const aContexts = await oBinding.requestContexts(0, 1);
+
+            if (aContexts.length === 0) {
+                MessageBox.error(
+                    "No existe configuración de adjuntos para el tipo de asiento seleccionado."
+                );
+                return false;
+            }
+
+            const oConfig = aContexts[0].getObject();
+
+            if (!oConfig.obligatorio) {
+                return true;
+            }
+
+            const oTable = this.byId("tbladjuntosSolicitud");
+            const iAdjuntos = oTable.getItems().length;
+
+            if (iAdjuntos === 0) {
+                MessageBox.error(
+                    "Para el tipo de asiento seleccionado es obligatorio adjuntar al menos un archivo."
+                );
+                return false;
+            }
+
+            return true;
         },
 
         // --- nueva función de validación ---
