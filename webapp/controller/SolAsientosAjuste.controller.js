@@ -21,6 +21,8 @@ sap.ui.define([
             sap.ui.getCore().attachValidationSuccess(oEvent => {
                 oEvent.getParameter("element").setValueState(sap.ui.core.ValueState.None);
             });
+
+            this._actualizarVisibilidadTipoCambio();
         },
 
 
@@ -572,16 +574,15 @@ sap.ui.define([
             const oView = this.getView();
             let bValido = true;
 
-            // Lista de campos requeridos según tu formulario
             const aCampos = [
                 { id: "txtsolicitante", label: "Solicitante" },
                 { id: "cbSector", label: "Sector" },
                 { id: "txtsociedad", label: "Sociedad" },
-                { id: "txtMoneda", label: "Moneda" },          // ComboBox
+                { id: "txtMoneda", label: "Moneda" },
                 { id: "txtClaseDocumento", label: "Clase Documento" },
-                { id: "dpFechaConta", label: "Fecha Contabilización" }, // DatePicker
-                { id: "dpFechaDoc", label: "Fecha Documento" },          // DatePicker
-                { id: "txtPeriodo", label: "Período/Año" },              // MaskInput
+                { id: "dpFechaConta", label: "Fecha Contabilización" },
+                { id: "dpFechaDoc", label: "Fecha Documento" },
+                { id: "txtPeriodo", label: "Período/Año" },
                 { id: "cbTipoAsiento", label: "Tipo de Asiento" },
                 { id: "txttextocabecera", label: "Texto Cabecera" }
             ];
@@ -592,7 +593,6 @@ sap.ui.define([
 
                 let sValue = "";
 
-                // 👇 Controlar cada tipo de control UI5
                 if (oControl.isA("sap.m.ComboBox")) {
                     sValue = oControl.getSelectedKey?.() || oControl.getValue?.();
                 } else if (oControl.isA("sap.m.DatePicker")) {
@@ -602,7 +602,6 @@ sap.ui.define([
                 } else if (oControl.isA("sap.m.Input")) {
                     sValue = oControl.getValue?.();
                 } else {
-                    // fallback para otros tipos
                     sValue = oControl.getValue?.() || oControl.getSelectedKey?.();
                 }
 
@@ -615,7 +614,67 @@ sap.ui.define([
                 }
             });
 
+            // NUEVO — Validación condicional de Tipo de Cambio
+            const oComboMoneda = oView.byId("txtMoneda");
+            const sMonedaSeleccionada = oComboMoneda?.getValue?.();
+
+            if (sMonedaSeleccionada && sMonedaSeleccionada !== "ARS") {
+                const oTipoCambio = oView.byId("txtTipoCambio");
+                const sValorTC = oTipoCambio?.getValue?.();
+                const fValorTC = parseFloat(sValorTC);
+
+                if (!sValorTC || isNaN(fValorTC) || fValorTC <= 0) {
+                    oTipoCambio.setValueState(sap.ui.core.ValueState.Error);
+                    oTipoCambio.setValueStateText('"Tipo de Cambio" es obligatorio y debe ser mayor a 0 cuando la moneda no es ARS');
+                    bValido = false;
+                } else {
+                    oTipoCambio.setValueState(sap.ui.core.ValueState.None);
+                }
+            }
+
             return bValido;
         },
+        onMonedaChange: function (oEvent) {
+            const sMoneda = oEvent.getSource().getValue();
+            if (sMoneda === "ARS") {
+                const oContext = this.getView().getBindingContext();
+                if (oContext) {
+                    oContext.setProperty("tipoCambio", null);
+                }
+                const oTipoCambio = this.getView().byId("txtTipoCambio");
+                if (oTipoCambio) {
+                    oTipoCambio.setValueState(sap.ui.core.ValueState.None);
+                }
+            }
+            this._actualizarVisibilidadTipoCambio();
+        },
+
+        onTipoCambioLiveChange: function (oEvent) {
+            const oInput = oEvent.getSource();
+            const sValue = oInput.getValue();
+
+            // Permite números, puntos y comas mientras se escribe, bloqueando letras y símbolos raros
+            let sCleanedValue = sValue.replace(/[^\d.,]/g, "");
+
+            // 🆕 Convierte la coma decimal (formato argentino) a punto (formato que espera el backend)
+            sCleanedValue = sCleanedValue.replace(/,/g, ".");
+
+            if (sValue !== sCleanedValue) {
+                oInput.setValue(sCleanedValue);
+            }
+        },
+        _actualizarVisibilidadTipoCambio: function () {
+            const oView = this.getView();
+            const oComboMoneda = oView.byId("txtMoneda");
+            const sMoneda = oComboMoneda.getValue();
+            const bMostrar = (sMoneda === "USD" || sMoneda === "EUR");
+
+            oView.byId("lblTipoCambio").setVisible(bMostrar);
+            oView.byId("txtTipoCambio").setVisible(bMostrar);
+            oView.byId("txtTipoCambio").setRequired(bMostrar);
+
+            console.log("[TipoCambio] moneda actual:", sMoneda, "-> mostrar:", bMostrar); // para debug, sacalo después
+        },
+
     });
 });

@@ -73,9 +73,11 @@
                                         <l:VerticalLayout id="v2" class="lVerticalLayoutClass" width="100%">
                                             
                                             <Label id="lblMoneda" text="Moneda" labelFor="txtMoneda" />
-                                            <ComboBox value="{moneda}" id="txtMoneda" width="100%" required="true">
+                                            <ComboBox value="{moneda}" id="txtMoneda" width="100%" required="true" selectionChange="onMonedaChange">
                                             <items>
                                                 <core:Item id="M1" key="1" text="ARS"/>
+                                                <core:Item id="M2" key="USD" text="USD"/>
+                                                <core:Item id="M3" key="EUR" text="EUR"/>
                                             </items>
                                             </ComboBox>
                                             
@@ -136,6 +138,11 @@
                                         <l:VerticalLayout id="v4" class="lVerticalLayoutClass"  width="100%">
                                             <Label id="lblTextocabecera" text="Texto Cabecera" labelFor="txttextocabecera" />
                                             <Input id="txttextocabecera"  value="{textoCabecera}" placeholder="Ingrese el texto" showSuggestion="true" required="true" maxLength="25"/>
+                                        
+                                            <!-- 🆕 Tipo de Cambio, debajo de Texto Cabecera -->
+                                       <Label id="lblTipoCambio" text="Tipo de Cambio" labelFor="txtTipoCambio" />
+                                       <Input id="txtTipoCambio" value="{ path: 'tipoCambio', targetType: 'any'}" placeholder="Ingrese el tipo de cambio" liveChange="onTipoCambioLiveChange"/>
+                                        
                                         </l:VerticalLayout>
                                     </f:fields>
                                 </f:FormElement>
